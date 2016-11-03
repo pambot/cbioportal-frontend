@@ -80,6 +80,7 @@ var config = {
     ],
 
     'module': {
+        'noParse' : ['oncoprint-bundle'],
         'loaders': [
             {
                 test: /\.tsx?$/,

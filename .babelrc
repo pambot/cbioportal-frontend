@@ -2,7 +2,8 @@
   "presets": ["es2015", "stage-0", "react"],
   "env": {
     "development": {
-      "presets": ["react-hmre"]
+      "presets": ["react-hmre"],
+      "ignore": ["oncoprint-bundle"]
     },
     "production": {
       "presets": []
