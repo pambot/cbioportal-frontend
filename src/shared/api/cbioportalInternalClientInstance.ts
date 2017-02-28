@@ -1,3 +1,5 @@
 import CBioPortalAPIInternal from "./CBioPortalAPIInternal";
-const client = new CBioPortalAPIInternal(`//${(window as any)['__API_ROOT__']}`);
+import AppConfig from 'appConfig';
+
+const client = new CBioPortalAPIInternal(`//${AppConfig.apiRoot}`);
 export default client;
