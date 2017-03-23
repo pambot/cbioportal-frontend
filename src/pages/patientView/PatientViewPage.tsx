@@ -420,8 +420,8 @@ export default class PatientViewPage extends React.Component<IPatientViewPagePro
 
         return (
             <div>
-
-                <div className="studyMetaBar">
+                <div className="topBanner">
+                <div className="studyMetaBar contentWidth">
                     <div>
                     <If condition={(cohortNav != null)}>
 
@@ -437,7 +437,7 @@ export default class PatientViewPage extends React.Component<IPatientViewPagePro
 
 
                 {  (patientViewPageStore.patientViewData.isComplete) && (
-                    <div className="patientPageHeader clearfix">
+                    <div className="patientPageHeader clearfix contentWidth">
                         <i className="fa fa-user-circle-o patientIcon" aria-hidden="true"></i>
                         <table>
                             <tr>
@@ -456,11 +456,12 @@ export default class PatientViewPage extends React.Component<IPatientViewPagePro
                     </div>
                 )
                 }
+                </div>
                 <If condition={patientViewPageStore.patientViewData.isComplete}>
                 <Then>
                 <MSKTabs id="patientViewPageTabs" activeTabId={this.props.routing.query.tab}  onTabClick={(id:string)=>this.handleTabChange(id)} className="mainTabs">
 
-                        <MSKTab key={0} id="summaryTab" linkText="Summary">
+                        <MSKTab key={0} id="summaryTab" className="contentWidth" linkText="Summary">
 
                             {
                                 (!!sampleManager && patientViewPageStore.clinicalEvents.isComplete && patientViewPageStore.clinicalEvents.result.length > 0) && (
