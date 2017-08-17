@@ -1,7 +1,6 @@
 import CohortColumnFormatter from './CohortColumnFormatter';
 import {IGisticData} from "shared/model/Gistic";
-import {DiscreteCopyNumberData} from "shared/api/generated/CBioPortalAPI";
-import {CopyNumberCount, CopyNumberCountIdentifier} from "shared/api/generated/CBioPortalAPIInternal";
+import {DiscreteCopyNumberData, CopyNumberCount, CopyNumberCountIdentifier} from "shared/api/generated/CBioPortalAPI";
 import React from 'react';
 import { assert } from 'chai';
 import {shallow, mount, ReactWrapper} from 'enzyme';
@@ -24,7 +23,8 @@ describe('CohortColumnFormatter', () => {
                 type: ""
             },
             geneticProfileId: "alterations",
-            sampleId: "SAMPLE_01"
+            sampleId: "SAMPLE_01",
+            patientId: "PATIENT1"
         },
         {
             alteration: 2,
@@ -38,7 +38,8 @@ describe('CohortColumnFormatter', () => {
                 type: ""
             },
             geneticProfileId: "alterations",
-            sampleId: "SAMPLE_02"
+            sampleId: "SAMPLE_02",
+            patientId: "PATIENT1"
         }
     ];
 

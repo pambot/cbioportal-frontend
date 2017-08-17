@@ -1,17 +1,13 @@
 import * as React from "react";
 import {observer} from "mobx-react";
-import {computed} from "mobx";
-import MutationTable from "shared/components/mutationTable/MutationTable";
-import {IMutationTableProps} from "shared/components/mutationTable/MutationTable";
-import LazyLoadedTableCell from "shared/lib/LazyLoadedTableCell";
-import {MutationTableColumnType} from "shared/components/mutationTable/MutationTable";
-import CancerTypeCache from "../../../shared/cache/CancerTypeCache";
-import MutationCountCache from "../../../shared/cache/MutationCountCache";
-import {Mutation, ClinicalData, MutationCount} from "../../../shared/api/generated/CBioPortalAPI";
-import {Column} from "../../../shared/components/lazyMobXTable/LazyMobXTable";
+import {
+    IMutationTableProps, MutationTableColumnType, default as MutationTable
+} from "shared/components/mutationTable/MutationTable";
+import CancerTypeColumnFormatter from "shared/components/mutationTable/column/CancerTypeColumnFormatter";
+import TumorAlleleFreqColumnFormatter from "shared/components/mutationTable/column/TumorAlleleFreqColumnFormatter";
 
 export interface IResultsViewMutationTableProps extends IMutationTableProps {
-    // TODO add results view specific props
+    // add results view specific props here if needed
 }
 
 @observer
@@ -56,7 +52,11 @@ export default class ResultsViewMutationTable extends MutationTable<IResultsView
 
         // override default visibility for some columns
         this._columns[MutationTableColumnType.MUTATION_ASSESSOR].visible = true;
-
+        this._columns[MutationTableColumnType.CANCER_TYPE].visible = CancerTypeColumnFormatter.isVisible(
+            this.props.dataStore ? this.props.dataStore.allData : this.props.data,
+            this.props.sampleIdToTumorType);
+        this._columns[MutationTableColumnType.TUMOR_ALLELE_FREQ].visible = TumorAlleleFreqColumnFormatter.isVisible(
+            this.props.dataStore ? this.props.dataStore.allData : this.props.data);
 
         // order columns
         this._columns[MutationTableColumnType.SAMPLE_ID].order = 10;
@@ -85,7 +85,7 @@ export default class ResultsViewMutationTable extends MutationTable<IResultsView
 
         // exclude
         this._columns[MutationTableColumnType.CANCER_TYPE].shouldExclude = ()=>{
-            return !this.props.cancerTypeCache;
+            return !this.props.sampleIdToTumorType;
         };
         this._columns[MutationTableColumnType.NUM_MUTATIONS].shouldExclude = ()=>{
             return !this.props.mutationCountCache;

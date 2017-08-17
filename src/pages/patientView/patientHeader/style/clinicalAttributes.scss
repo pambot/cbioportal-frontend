@@ -31,7 +31,7 @@ $sample-color-xenograft: pink;
     .clinical-attribute[attr-id="DFS_STATUS"],
     .clinical-attribute[attr-id="DFS_MONTHS"],
     .clinical-attribute[attr-id="CANCER_TYPE"],
-    #patient-attributes .clinical-attribute[attr-id="CANCER_TYPE_DETAILED"],
+    .clinical-attribute[attr-id="CANCER_TYPE_DETAILED"],
     .clinical-attribute[attr-id="KNOWN_MOLECULAR_CLASSIFIER"],
     .clinical-attribute[attr-id="GLEASON_SCORE"],
     .clinical-attribute[attr-id="HISTOLOGY"],
@@ -62,7 +62,6 @@ $sample-color-xenograft: pink;
     /* Order sample clinical attributes (they don't exist for patient) */
     .clinical-attribute[attr-id="DERIVED_NORMALIZED_CASE_TYPE"] {
         order: 1;
-        text-transform: capitalize;
     }
     .clinical-attribute[attr-id="DERIVED_SAMPLE_LOCATION"] {
         order: 2;

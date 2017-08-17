@@ -2,7 +2,7 @@ import * as React from 'react';
 import OncoKbCard from "./OncoKbCard";
 import {observer} from "mobx-react";
 import OncoKbEvidenceCache from "shared/cache/OncoKbEvidenceCache";
-import OncokbPmidCache from "shared/cache/PmidCache";
+import OncokbPubMedCache from "shared/cache/PubMedCache";
 import {ICacheData, ICache} from "shared/lib/SimpleCache";
 import {IndicatorQueryResp, Query} from "shared/api/generated/OncoKbAPI";
 import {IEvidence} from "shared/model/OncoKB";
@@ -15,7 +15,7 @@ export interface IOncoKbTooltipProps {
     indicator?: IndicatorQueryResp;
     evidenceCache?: OncoKbEvidenceCache;
     evidenceQuery?: Query;
-    pmidCache?: OncokbPmidCache;
+    pubMedCache?: OncokbPubMedCache;
     handleFeedbackOpen?: () => void;
     onLoadComplete?: () => void;
 }
@@ -44,18 +44,16 @@ export default class OncoKbTooltip extends React.Component<IOncoKbTooltipProps, 
 
     public get pmidData():ICache<any>
     {
-        let pmidData: ICache<any> = {};
-
-        if (this.props.pmidCache && this.evidenceCacheData)
+        if (this.props.pubMedCache && this.evidenceCacheData)
         {
             const refs = extractPmids(this.evidenceCacheData.data);
 
-            if (refs.length > 0) {
-                pmidData = this.props.pmidCache.getData(refs.map((ref:number) => ref.toString()), refs);
+            for (const ref of refs) {
+                this.props.pubMedCache.get(ref);
             }
         }
 
-        return pmidData;
+        return (this.props.pubMedCache && this.props.pubMedCache.cache) || {};
     }
 
     public render()

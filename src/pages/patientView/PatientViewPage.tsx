@@ -11,7 +11,6 @@ import {If, Then, Else} from 'react-if';
 import SampleManager from './sampleManager';
 import SelectCallback = ReactBootstrap.SelectCallback;
 import {ThreeBounce} from 'better-react-spinkit';
-import { Modal } from 'react-bootstrap';
 import PatientHeader from './patientHeader/PatientHeader';
 import {PaginationControls} from "../../shared/components/paginationControls/PaginationControls";
 import { PatientViewPageStore } from './clinicalInformation/PatientViewPageStore';
@@ -20,16 +19,20 @@ import ClinicalInformationSamples from "./clinicalInformation/ClinicalInformatio
 import {observer, inject } from "mobx-react";
 import {getSpanElements} from './clinicalInformation/lib/clinicalAttributesUtil.js';
 import CopyNumberTableWrapper from "./copyNumberAlterations/CopyNumberTableWrapper";
-import {reaction, computed} from "mobx";
+import {reaction, computed, autorun, IReactionDisposer} from "mobx";
 import Timeline from "./timeline/Timeline";
 import {default as PatientViewMutationTable} from "./mutation/PatientViewMutationTable";
 import PathologyReport from "./pathologyReport/PathologyReport";
 import { MSKTabs, MSKTab } from "../../shared/components/MSKTabs/MSKTabs";
-import validateParameters from '../../shared/lib/validateParameters';
 import CtDNAResultsTab from './ctDNA/CtDNAResultsTab';
+import { validateParametersPatientView } from '../../shared/lib/validateParameters';
+import LoadingIndicator from "shared/components/loadingIndicator/LoadingIndicator";
+import ValidationAlert from "shared/components/ValidationAlert";
+import AjaxErrorModal from "shared/components/AjaxErrorModal";
+import AppConfig from 'appConfig';
 
 import './patient.scss';
-import LoadingIndicator from "../../shared/components/loadingIndicator/LoadingIndicator";
+import IFrameLoader from "../../shared/components/iframeLoader/IFrameLoader";
 
 const patientViewPageStore = new PatientViewPageStore();
 
@@ -50,6 +53,8 @@ export interface IPatientViewPageProps {
 @observer
 export default class PatientViewPage extends React.Component<IPatientViewPageProps, {}> {
 
+    private updatePageTitleReaction: IReactionDisposer;
+
     constructor(props: IPatientViewPageProps) {
 
         super();
@@ -59,7 +64,7 @@ export default class PatientViewPage extends React.Component<IPatientViewPagePro
             () => props.routing.location.query,
             query => {
 
-                const validationResult = validateParameters(query, [ 'studyId', ['sampleId', 'caseId']]);
+                const validationResult = validateParametersPatientView(query);
 
                 if (validationResult.isValid) {
 
@@ -83,11 +88,25 @@ export default class PatientViewPage extends React.Component<IPatientViewPagePro
             },
             { fireImmediately:true }
         );
+
+        this.updatePageTitleReaction = reaction(
+            () => patientViewPageStore.pageTitle,
+            (title:string) => ((window as any).document.title = title),
+            { fireImmediately:true }
+        )
+
     }
 
     public componentDidMount() {
 
         this.exposeComponentRenderersToParentScript();
+
+    }
+
+    public componentWillUnmount(){
+
+        //dispose reaction
+        this.updatePageTitleReaction();
 
     }
 
@@ -103,10 +122,13 @@ export default class PatientViewPage extends React.Component<IPatientViewPagePro
 
     }
 
-    private handleSampleClick(id: string) {
-
-        this.props.routing.updateRoute({ caseId:undefined, sampleId:id });
-
+    public handleSampleClick(id: string, e: React.MouseEvent<HTMLAnchorElement>) {
+        if (!e.shiftKey && !e.altKey && !e.metaKey) {
+            e.preventDefault();
+            this.props.routing.updateRoute({ caseId:undefined, sampleId:id });
+        }
+        // otherwise do nothing, we want default behavior of link
+        // namely that href will open in a new window/tab
     }
 
     private handleTabChange(id: string) {
@@ -143,26 +165,16 @@ export default class PatientViewPage extends React.Component<IPatientViewPagePro
         let studyName: JSX.Element | null = null;
 
         if (patientViewPageStore.urlValidationError) {
-            return (
-                <div className="alert alert-danger urlError" role="alert">
-                    <i className="fa fa-warning" aria-hidden="true"></i>
-                    <h3>The URL is invalid</h3>
-                    <ul>
-                        { patientViewPageStore.urlValidationError
-                            .split(".").map((message:string)=>(message.length > 0) ? <li>{message}</li> : null)
-                        }
-                    </ul>
-                </div>
-            )
+            return <ValidationAlert urlValidationError={patientViewPageStore.urlValidationError} />;
         }
 
         if (patientViewPageStore.studyMetaData.isComplete) {
             let study = patientViewPageStore.studyMetaData.result;
-            studyName = <a href={`study.do?cancer_study_id=${study.studyId}`} className="studyMetaBar_studyName">{study.name}</a>;
+            studyName = <a href={`study?id=${study.studyId}`} className="studyMetaBar_studyName">{study.name}</a>;
         }
 
-        if (patientViewPageStore.patientViewData.isComplete) {
-            let patientData = patientViewPageStore.patientViewData.result!;
+        if (patientViewPageStore.patientViewData.isComplete && patientViewPageStore.studyMetaData.isComplete) {
+            let patientData = patientViewPageStore.patientViewData.result;
             if (patientViewPageStore.clinicalEvents.isComplete && patientViewPageStore.clinicalEvents.result.length > 0) {
                 sampleManager = new SampleManager(patientData.samples!, patientViewPageStore.clinicalEvents.result);
             } else {
@@ -174,17 +186,31 @@ export default class PatientViewPage extends React.Component<IPatientViewPagePro
                 return (
                     <div className="patientSample">
                         <span className='clinical-spans'>
-                            {  sampleManager!.getComponentForSample(sample.id, true) }
-                            {'\u00A0'}
-                            <a href="javascript:void(0)" onClick={()=>{ this.handleSampleClick(sample.id) }}>{sample.id}</a>
-                            {getSpanElements(clinicalDataLegacy, 'lgg_ucsf_2014')}
+                            {
+                                sampleManager!.getComponentForSample(sample.id, 1, '',
+                                    <span style={{display:'inline-flex'}}>
+                                        {'\u00A0'}
+                                        <a
+                                            href={`case.do?#/patient?sampleId=${sample.id}&studyId=${patientViewPageStore.studyMetaData.result!.studyId}`}
+                                            target="_blank"
+                                            onClick={(e: React.MouseEvent<HTMLAnchorElement>) => this.handleSampleClick(sample.id, e)}
+                                        >
+                                            {sample.id}
+                                        </a>
+                                        {getSpanElements(clinicalDataLegacy, 'lgg_ucsf_2014')}
+                                    </span>
+                                )
+                            }
                         </span>
                     </div>
-
-                )
+                );
             });
 
-
+            if (sampleHeader && sampleHeader.length > 0 && patientViewPageStore.pageMode === 'sample' && patientViewPageStore.patientId) {
+                sampleHeader.push(
+                    <button className="btn btn-default btn-xs" onClick={()=>this.handlePatientClick(patientViewPageStore.patientId)}>Show all samples</button>
+                );
+            }
         }
 
         if (patientViewPageStore.patientIdsInCohort && patientViewPageStore.patientIdsInCohort.length > 0) {
@@ -192,6 +218,7 @@ export default class PatientViewPage extends React.Component<IPatientViewPagePro
             cohortNav = (
                 <PaginationControls
                     currentPage={indexInCohort + 1}
+                    showMoreButton={false}
                     showItemsPerPageSelector={false}
                     showFirstPage={true}
                     showLastPage={true}
@@ -218,18 +245,12 @@ export default class PatientViewPage extends React.Component<IPatientViewPagePro
         return (
             <div className="patientViewPage">
 
-                <Modal show={(patientViewPageStore.ajaxErrors.length > 0)} onHide={()=>{ patientViewPageStore.clearErrors() }}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Sorry, something went wrong!</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <p>Troubleshooting:</p>
-                        <ul>
-                            <li>Check that your URL parameters are valid.</li>
-                            <li>Make sure you are connected to the internet.</li>
-                        </ul>
-                    </Modal.Body>
-                </Modal>
+                <AjaxErrorModal
+                    show={(patientViewPageStore.ajaxErrors.length > 0)}
+                    onHide={()=>{ patientViewPageStore.clearErrors() }}
+                    title={`Can't find ${patientViewPageStore.pageMode} ${patientViewPageStore.caseId} in study ${patientViewPageStore.studyId}.`}
+                    troubleshooting={["Check that your URL parameters are valid.", "Try refreshing the page.", "Make sure you are connected to the internet."]}
+                />
 
                 <div className="topBanner">
 
@@ -282,12 +303,14 @@ export default class PatientViewPage extends React.Component<IPatientViewPagePro
                             />
 
                             {
-                                (patientViewPageStore.mutationData.isComplete && patientViewPageStore.cnaSegments.isComplete && sampleManager)
+                                (patientViewPageStore.mutationData.isComplete && patientViewPageStore.cnaSegments.isComplete
+                                && patientViewPageStore.sequencedSampleIdsInStudy.isComplete && sampleManager)
                                 && ( patientViewPageStore.mutationData.result.length > 0 || patientViewPageStore.cnaSegments.result.length > 0)
                                 && (
                                     <div>
                                         <GenomicOverview
                                             mergedMutations={patientViewPageStore.mergedMutationData}
+                                            sequencedSamples={patientViewPageStore.sequencedSampleIdsInStudy.result}
                                             cnaSegments={patientViewPageStore.cnaSegments.result}
                                             sampleOrder={sampleManager.sampleIndex}
                                             sampleLabels={sampleManager.sampleLabels}
@@ -300,26 +323,33 @@ export default class PatientViewPage extends React.Component<IPatientViewPagePro
                                 )
                             }
 
-                            <LoadingIndicator isLoading={patientViewPageStore.mutationData.isPending} />
+                            <LoadingIndicator isLoading={patientViewPageStore.mutationData.isPending && patientViewPageStore.uncalledMutationData.isPending} />
 
                             {
-                                (patientViewPageStore.mutationData.isComplete && !!sampleManager) && (
+                                (patientViewPageStore.mutationData.isComplete && patientViewPageStore.uncalledMutationData.isComplete && !!sampleManager) && (
                                     <PatientViewMutationTable
                                         sampleManager={sampleManager}
                                         sampleIds={sampleManager ? sampleManager.getSampleIdsInOrder() : []}
+                                        sampleIdToTumorType={patientViewPageStore.sampleIdToTumorType}
                                         variantCountCache={patientViewPageStore.variantCountCache}
                                         discreteCNACache={patientViewPageStore.discreteCNACache}
                                         mrnaExprRankCache={patientViewPageStore.mrnaExprRankCache}
                                         oncoKbEvidenceCache={patientViewPageStore.oncoKbEvidenceCache}
-                                        pmidCache={patientViewPageStore.pmidCache}
+                                        pubMedCache={patientViewPageStore.pubMedCache}
                                         mrnaExprRankGeneticProfileId={patientViewPageStore.mrnaRankGeneticProfileId.result || undefined}
                                         discreteCNAGeneticProfileId={patientViewPageStore.geneticProfileIdDiscrete.result}
-                                        data={patientViewPageStore.mergedMutationData}
+                                        data={patientViewPageStore.mergedMutationDataIncludingUncalled}
                                         mutSigData={patientViewPageStore.mutSigData.result}
                                         myCancerGenomeData={patientViewPageStore.myCancerGenomeData}
                                         hotspots={patientViewPageStore.indexedHotspotData}
                                         cosmicData={patientViewPageStore.cosmicData.result}
-                                        oncoKbData={patientViewPageStore.oncoKbData.result}
+                                        oncoKbData={patientViewPageStore.oncoKbData}
+                                        civicGenes={patientViewPageStore.civicGenes.result}
+                                        civicVariants={patientViewPageStore.civicVariants.result}
+                                        enableOncoKb={AppConfig.showOncoKB}
+                                        enableHotspot={AppConfig.showHotspot}
+                                        enableMyCancerGenome={AppConfig.showMyCancerGenome}
+                                        enableCivic={AppConfig.showCivic}
                                     />
                                 )
                             }
@@ -331,9 +361,13 @@ export default class PatientViewPage extends React.Component<IPatientViewPagePro
                             <CopyNumberTableWrapper
                                 sampleIds={sampleManager ? sampleManager.getSampleIdsInOrder() : []}
                                 sampleManager={sampleManager}
-                                cnaOncoKbData={patientViewPageStore.cnaOncoKbData.result}
+                                cnaOncoKbData={patientViewPageStore.cnaOncoKbData}
+                                cnaCivicGenes={patientViewPageStore.cnaCivicGenes.result}
+                                cnaCivicVariants={patientViewPageStore.cnaCivicVariants.result}
                                 oncoKbEvidenceCache={patientViewPageStore.oncoKbEvidenceCache}
-                                pmidCache={patientViewPageStore.pmidCache}
+                                enableOncoKb={AppConfig.showOncoKB}
+                                enableCivic={AppConfig.showCivic}
+                                pubMedCache={patientViewPageStore.pubMedCache}
                                 data={patientViewPageStore.mergedDiscreteCNAData}
                                 copyNumberCountCache={patientViewPageStore.copyNumberCountCache}
                                 mrnaExprRankCache={patientViewPageStore.mrnaExprRankCache}
@@ -378,8 +412,7 @@ export default class PatientViewPage extends React.Component<IPatientViewPagePro
                             hide={(patientViewPageStore.pathologyReport.isComplete && patientViewPageStore.pathologyReport.result.length === 0)}
                             loading={patientViewPageStore.pathologyReport.isPending}
                     >
-                        <div style={{position:"relative"}}>
-                            <ThreeBounce className="center-block text-center" /> {/*Put it underneath so it gets covered by loaded element*/}
+                        <div>
                             <PathologyReport iframeStyle={{position:"absolute", top:0}} pdfs={patientViewPageStore.pathologyReport.result} />
                         </div>
                     </MSKTab>
@@ -389,11 +422,7 @@ export default class PatientViewPage extends React.Component<IPatientViewPagePro
                              hide={(patientViewPageStore.MDAndersonHeatMapAvailable.isComplete && !patientViewPageStore.MDAndersonHeatMapAvailable.result)}
                             loading={patientViewPageStore.MDAndersonHeatMapAvailable.isPending}
                     >
-                        <div style={{position:"relative"}}>
-                            <ThreeBounce className="center-block text-center" /> {/*Put it underneath so it gets covered by loaded element*/}
-                            <iframe style={{position:"absolute", top:0, width:'100%', height:700, border:'none'}}
-                                    src={ `//bioinformatics.mdanderson.org/TCGA/NGCHMPortal/?participant=${patientViewPageStore.patientId}` }></iframe>
-                        </div>
+                            <IFrameLoader height={700} url={ `//bioinformatics.mdanderson.org/TCGA/NGCHMPortal/?participant=${patientViewPageStore.patientId}` } />
                     </MSKTab>
 
                     <MSKTab key={5} id="tissueImageTab" linkText="Tissue Image"
@@ -402,9 +431,7 @@ export default class PatientViewPage extends React.Component<IPatientViewPagePro
                             loading={patientViewPageStore.hasTissueImageIFrameUrl.isPending}
                     >
                         <div style={{position: "relative"}}>
-                            <ThreeBounce className="center-block text-center" /> {/*Put it underneath so it gets covered by loaded element*/}
-                            <iframe style={{position:"absolute", top:0, width:'100%', height:700, border:'none'}}
-                                    src={ `http://cancer.digitalslidearchive.net/index_mskcc.php?slide_name=${patientViewPageStore.patientId}` }></iframe>
+                            <IFrameLoader height={700} url={  `http://cancer.digitalslidearchive.net/index_mskcc.php?slide_name=${patientViewPageStore.patientId}` } />
                         </div>
                     </MSKTab>
 

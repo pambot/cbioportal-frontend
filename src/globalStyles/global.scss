@@ -1,8 +1,10 @@
+@import './variables.scss';
 
 /* locks scroll bar on to prevent horizontal jump when content render */
 body {
   overflow-y:scroll;
   background:#f5f5f5 !important;
+  text-align:left;
 }
 
 .btn-default {
@@ -11,13 +13,43 @@ body {
 
 /* fix for legacy style isses. makes it bootstrap */
 #content .cbioportal-frontend {
-    h4 {
-     font-size:18px;
-     margin-top:10px;
-     margin-bottom:10px;
-      font-weight:500;
-      line-height:1.1;
-      color:$text-color;
+  h4 {
+    color: $text-color;
+    font-size: 18px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-weight: 500;
+    line-height: 1.1;
+  }
+}
+
+div {
+  text-align:left;
+}
+
+/* Buttons */
+
+.cta { // "Call To Action"
+  background: linear-gradient(to bottom, #1f8cc5 50%, #1982b8 100%);
+  border: 0;
+  border-bottom: 1px solid rgba(0,0,0,0.2);
+  border-radius: 2px;
+  color: rgba(255, 255, 255, 1);
+  display: block;
+  text-align: center;
+  font: normal normal 500 11px/19px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  padding: 5px 10px;
+
+  &:hover:not(:disabled) {
+    cursor: pointer;
+    background: linear-gradient(to bottom, #1982b8 50%, #1f8cc5 100%);
+    color: #fff;
+  }
+  &:disabled {
+    cursor: default;
+    background: $lightGrey;
+    border-bottom: 0;
+    color: $darkGrey;
   }
 }
 
@@ -26,6 +58,7 @@ body {
   margin:0 auto;
 }
 
+/* Tables */
 th.reactable-header-sortable {
 
   &:focus {outline:0;}
@@ -47,7 +80,7 @@ th.reactable-header-sort-asc:after {
 .table-border-top .reactable-column-header {
 
   th {
-    border-top:1px dashed #ddd !important;
+
   }
 
 }
@@ -60,6 +93,13 @@ th.reactable-header-sort-asc:after {
 
 .rc-tooltip {
   opacity:1 !important;
+
+  &.hideTooltipArrow {
+    .rc-tooltip-arrow {
+      display:none;
+    }
+  }
+
 }
 
 .mainTabs {
@@ -68,10 +108,35 @@ th.reactable-header-sort-asc:after {
     @extend .portalWidth;
     margin:0 auto;
 
-    .active a {
-      border-top:3px solid $brand-primary !important;
-      padding-top:9px;
+    .active {
+      a {
+        border-top: 3px solid $brand-primary !important;
+        padding-top: 9px;
+      }
     }
+
+  }
+
+  > .nav.nav-pills {
+
+    margin-bottom:5px;
+
+    li {
+      a {
+        background: #eee;
+        border-top: none !important;
+      }
+
+      &.active a {
+        background:$brand-primary;
+        border-top:none !important;
+        &:hover {
+          color:#fff !important;
+        }
+      }
+    }
+
+
 
   }
 
@@ -98,8 +163,6 @@ th.reactable-header-sort-asc:after {
     }
 
   }
-
-  background:#f5f5f5;
 
 }
 
@@ -146,4 +209,181 @@ th.reactable-header-sort-asc:after {
   span {
     display:none;
   }
+}
+
+#mainColumn {
+  padding: $gutterWidth 0;
+}
+
+.fixedWidth {
+  #mainColumn {
+    flex:1;
+    padding-left:0;
+    padding-right:0;
+    line-height:26px;
+  }
+
+  .contentWrapper {
+
+  }
+
+  header {
+    padding-left:0;
+    padding-right:0;
+  }
+
+  &.twoColumn {
+    .contentWrapper {
+      //.contentWidth {
+      //  padding-right: 0;
+      //}
+    }
+  }
+
+}
+
+.twoColumn {
+  #mainColumn {
+    padding-right: $gutterWidth;
+  }
+  //.contentWrapper {
+  //  .contentWidth {
+  //    padding-right: 0;
+  //  }
+  //}
+}
+
+
+.contentWrapper {
+
+  background:#fff;
+  min-height:500px;
+
+  //header styles
+  h1, h2, h3, h4 {
+    margin-top:30;
+    margin-bottom:20px;
+    color:$headerColor;
+    &:first-child {
+      margin-top:0;
+    }
+  }
+
+  h1 {
+    font-size:24px;
+  }
+
+  h2 {
+    font-size:20px;
+  }
+
+  h3 {
+    font-size:16px;
+  }
+
+
+  #rightColumn {
+    background:$lightBlue;
+    padding:$gutterWidth 0;
+    font-size:12px;
+    flex:0 0 325px;
+    border-right:1px solid $borderColor;
+    border-left:1px solid $borderColor;
+
+    .rightBarSection {
+      h3 {
+        border-bottom:1px solid #ddd;
+        margin: 0 0 4px 0;
+        padding-bottom:4px;
+        color:$brand-primary;
+      }
+      padding: 0 $gutterWidth 10px $gutterWidth;
+    }
+
+    .exampleQueries {
+      ul {
+        margin:0 0 0 15px;
+        padding:0;
+
+        li {
+          color:#cfd9ea;
+          text-indent:-3px;
+        }
+
+      }
+    }
+
+  }
+
+}
+
+.fixedWidth .contentWidth {
+  width:1200px;
+  padding-left:20px;
+  padding-right:20px;
+  margin:0 auto;
+}
+
+.noMargin {
+  .contentWidth {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  header {
+    padding-left:20px;
+    padding-right:20px;
+  }
+}
+
+.contentWidth {
+  margin:0 auto;
+  display:flex;
+  justify-content:space-between;
+  padding-left:20px;
+  padding-right:20px;
+
+  #mainColumn {
+    flex:1;
+    padding-left:0;
+  }
+}
+
+.alert {
+  border-color:#ddd;
+  color:inherit;
+}
+
+.alert-info {
+  background:$lightBlue;
+}
+
+.framedImage {
+  margin:20px 0;
+  border:1px solid #eee !important;
+  border-radius:$cornerBorderRadius;
+  padding:10px;
+  display:block;
+  box-shadow: 1px 1px 1px 0px rgba(0,0,0,0.21);
+}
+
+.newsPage {
+  #mainColumn {
+    li {
+      margin-bottom:5px;
+      img {
+        @extend .framedImage;
+      }
+      ul {
+        margin-top:5px;
+      }
+    }
+  }
+}
+
+
+
+.borderedChart {
+  padding:10px;
+  border-radius:$cornerBorderRadius;
+  border:1px dashed $borderColor;
 }

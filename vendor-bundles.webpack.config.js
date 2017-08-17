@@ -11,6 +11,12 @@ let config = {
         common: ['jquery','imports?jquery=jquery!jquery-migrate', 'react', 'react-dom', 'react-redux', 'react-bootstrap', 'seamless-immutable', 'lodash', 'mobx', 'mobx-react', 'mobx-react-devtools', 'mobx-utils', 'd3', 'datatables.net', 'webpack-raphael']
     },
 
+    module: {
+        loaders: [
+            { test: /lodash/, loader: 'imports?define=>false'}
+        ]
+    },
+
     output: {
         filename: '[name].bundle.js',
         path: 'common-dist',
@@ -20,9 +26,13 @@ let config = {
         library: '[name]_lib',
     },
 
+    devtool : 'source-map',
+
     plugins: [
 
     ],
+
+    devtool : 'source-map'
 };
 
 config.plugins = [
@@ -53,7 +63,7 @@ if (process.env.NODE_ENV !== 'development') {
             compress: {
                 warnings: false
             },
-            sourceMap:false,
+            sourceMap:true,
             comments:false
         })
 

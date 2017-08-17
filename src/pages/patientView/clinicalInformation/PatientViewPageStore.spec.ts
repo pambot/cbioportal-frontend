@@ -10,7 +10,7 @@ import sinon from 'sinon';
 // //import AppConfig from 'appConfig';
 // import request from 'superagent';
 
-describe('ClinicalInformationSamplesTable', () => {
+describe('PatientViewPageStore', () => {
 
     let store: PatientViewPageStore;
 
@@ -22,48 +22,40 @@ describe('ClinicalInformationSamplesTable', () => {
 
     });
 
-    it('if there are pdf items in response, returns collection, otherwise returns empty array', ()=>{
-        let result = handlePathologyReportCheckResponse({
+    it('if there are pdf items in response and their name starts with a given patientId, return collection, otherwise returns empty array', ()=>{
+        let result = handlePathologyReportCheckResponse('some', {
             total_count:1,
             items:[ { url:'someUrl', name:'someName' } ]
         });
         assert.deepEqual(result,[{ url: 'someUrl' , name: 'someName'}]);
 
-        result = handlePathologyReportCheckResponse({
+        result = handlePathologyReportCheckResponse('some', {
             total_count:0,
         });
         assert.deepEqual(result,[]);
     });
 
-    it('won\'t fetch cosmic data if there are no mutations', ()=>{
-
-        const fetchStub = sinon.stub();
-
-        let mockInstance = {
-            mutationData: { result:[] },
-            internalClient: {
-                fetchCosmicCountsUsingPOST: fetchStub
-            }
-        };
-
-        store.cosmicDataInvoke.apply(mockInstance).then((data: any)=>{
-           assert.isUndefined(data);
-           assert.isFalse(fetchStub.called);
+    it('if there are pdf items in response and their name starts with the wrong patientId, return empty array', ()=>{
+        let result = handlePathologyReportCheckResponse('xxx', {
+            total_count:1,
+            items:[ { url:'someUrl', name:'someName' } ]
         });
-
+        assert.deepEqual(result,[]);
     });
 
-    it('won\'t fetch onkokb data if there are no mutations', ()=>{
 
-        const fetchStub = sinon.stub();
+    it('sets page title to patient if theres a patient id and sample if sample id, patient id winning out', ()=>{
 
-        let mockInstance = {
-            mutationData: { result:[] }
-        };
+        assert.equal(store.pageTitle, 'Patient: ');
 
-        store.oncoKbDataInvoke.apply(mockInstance).then((data: any)=>{
-            assert.deepEqual(data,{sampleToTumorMap: {}, indicatorMap: {}});
-        });
+        store.setPatientId('1234');
+        assert.equal(store.pageTitle, 'Patient: 1234');
+
+        store.setSampleId('1234');
+        assert.equal(store.pageTitle, 'Sample: 1234');
+
+        store.setPatientId('1234');
+        assert.equal(store.pageTitle, 'Patient: 1234');
 
     });
 

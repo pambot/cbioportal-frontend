@@ -1,14 +1,6 @@
 import * as request from "superagent";
 
 type CallbackHandler = (err: any, res ? : request.Response) => void;
-export type Drug = {
-    'atcCodes': Array < string >
-
-        'drugName': string
-
-        'synonyms': Array < string >
-
-};
 export type User = {
     'email': string
 
@@ -19,24 +11,6 @@ export type User = {
         'role': string
 
 };
-export type EvidenceQueryRes = {
-    'alleles': Array < Alteration >
-
-        'alterations': Array < Alteration >
-
-        'evidences': Array < Evidence >
-
-        'gene': Gene
-
-        'id': string
-
-        'levelOfEvidences': Array < "LEVEL_0" | "LEVEL_1" | "LEVEL_2A" | "LEVEL_2B" | "LEVEL_3" | "LEVEL_3A" | "LEVEL_3B" | "LEVEL_4" | "LEVEL_R1" | "LEVEL_R2" | "LEVEL_R3" >
-
-        'oncoTreeTypes': Array < TumorType >
-
-        'query': Query
-
-};
 export type Query = {
     'alteration': string
 
@@ -45,6 +19,8 @@ export type Query = {
         'consequence': string
 
         'entrezGeneId': number
+
+        'hgvs': string
 
         'hugoSymbol': string
 
@@ -121,12 +97,6 @@ export type Alteration = {
         'variantResidues': string
 
 };
-export type MainType = {
-    'id': number
-
-        'name': string
-
-};
 export type AnnotatedVariant = {
     'gene': string
 
@@ -141,14 +111,6 @@ export type AnnotatedVariant = {
         'variant': string
 
 };
-export type VariantConsequence = {
-    'description': string
-
-        'isGenerallyTruncating': boolean
-
-        'term': string
-
-};
 export type History = {
     'dateTime': string
 
@@ -159,44 +121,6 @@ export type History = {
         'operationType': string
 
         'user': User
-
-};
-export type IndicatorQueryTreatment = {
-    'abstracts': Array < ArticleAbstract >
-
-        'approvedIndications': Array < string >
-
-        'drugs': Array < Drug >
-
-        'fdaApproved': boolean
-
-        'level': "LEVEL_0" | "LEVEL_1" | "LEVEL_2A" | "LEVEL_2B" | "LEVEL_3" | "LEVEL_3A" | "LEVEL_3B" | "LEVEL_4" | "LEVEL_R1" | "LEVEL_R2" | "LEVEL_R3"
-
-        'pmids': Array < string >
-
-};
-export type ResponseEntity = {
-    'body': {}
-
-    'statusCode': "100" | "101" | "102" | "103" | "200" | "201" | "202" | "203" | "204" | "205" | "206" | "207" | "208" | "226" | "300" | "301" | "302" | "303" | "304" | "305" | "307" | "308" | "400" | "401" | "402" | "403" | "404" | "405" | "406" | "407" | "408" | "409" | "410" | "411" | "412" | "413" | "414" | "415" | "416" | "417" | "418" | "419" | "420" | "421" | "422" | "423" | "424" | "426" | "428" | "429" | "431" | "500" | "501" | "502" | "503" | "504" | "505" | "506" | "507" | "508" | "509" | "510" | "511"
-
-};
-export type Treatment = {
-    'approvedIndications': Array < string >
-
-        'drugs': Array < Drug >
-
-};
-export type EvidenceQueries = {
-    'evidenceTypes': string
-
-        'highestLevelOnly': boolean
-
-        'levels': Array < "LEVEL_0" | "LEVEL_1" | "LEVEL_2A" | "LEVEL_2B" | "LEVEL_3" | "LEVEL_3A" | "LEVEL_3B" | "LEVEL_4" | "LEVEL_R1" | "LEVEL_R2" | "LEVEL_R3" >
-
-        'queries': Array < Query >
-
-        'source': string
 
 };
 export type Gene = {
@@ -265,34 +189,6 @@ export type GeneEvidence = {
         'shortDesc': string
 
         'status': string
-
-};
-export type ClinicalTrial = {
-    'cdrId': string
-
-        'countries': Array < string >
-
-        'diseaseCondition': string
-
-        'drugs': Array < Drug >
-
-        'eligibilityCriteria': string
-
-        'inUSA': boolean
-
-        'lastChangedDate': string
-
-        'nctId': string
-
-        'open': boolean
-
-        'phase': string
-
-        'purpose': string
-
-        'recruitingStatus': string
-
-        'title': string
 
 };
 export type Evidence = {
@@ -381,18 +277,164 @@ export type ActionableGene = {
         'variant': string
 
 };
+export type ArticleAbstract = {
+    'abstract': string
+
+        'link': string
+
+};
+export type Drug = {
+    'atcCodes': Array < string >
+
+        'drugName': string
+
+        'synonyms': Array < string >
+
+};
+export type EvidenceQueryRes = {
+    'alleles': Array < Alteration >
+
+        'alterations': Array < Alteration >
+
+        'evidences': Array < Evidence >
+
+        'gene': Gene
+
+        'id': string
+
+        'levelOfEvidences': Array < "LEVEL_0" | "LEVEL_1" | "LEVEL_2A" | "LEVEL_2B" | "LEVEL_3" | "LEVEL_3A" | "LEVEL_3B" | "LEVEL_4" | "LEVEL_R1" | "LEVEL_R2" | "LEVEL_R3" >
+
+        'oncoTreeTypes': Array < TumorType >
+
+        'query': Query
+
+};
+export type CancerGene = {
+    'entrezGeneId': string
+
+        'foundation': boolean
+
+        'foundationHeme': boolean
+
+        'hugoSymbol': string
+
+        'mSKHeme': boolean
+
+        'mSKImpact': boolean
+
+        'occurrenceCount': number
+
+        'oncokbAnnotated': boolean
+
+        'sangerCGC': boolean
+
+        'vogelstein': boolean
+
+};
+export type MainType = {
+    'id': number
+
+        'name': string
+
+};
+export type VariantConsequence = {
+    'description': string
+
+        'isGenerallyTruncating': boolean
+
+        'term': string
+
+};
+export type IndicatorQueryTreatment = {
+    'abstracts': Array < ArticleAbstract >
+
+        'approvedIndications': Array < string >
+
+        'drugs': Array < Drug >
+
+        'fdaApproved': boolean
+
+        'level': "LEVEL_0" | "LEVEL_1" | "LEVEL_2A" | "LEVEL_2B" | "LEVEL_3" | "LEVEL_3A" | "LEVEL_3B" | "LEVEL_4" | "LEVEL_R1" | "LEVEL_R2" | "LEVEL_R3"
+
+        'pmids': Array < string >
+
+};
+export type ResponseEntity = {
+    'body': {}
+
+    'statusCode': "100" | "101" | "102" | "103" | "200" | "201" | "202" | "203" | "204" | "205" | "206" | "207" | "208" | "226" | "300" | "301" | "302" | "303" | "304" | "305" | "307" | "308" | "400" | "401" | "402" | "403" | "404" | "405" | "406" | "407" | "408" | "409" | "410" | "411" | "412" | "413" | "414" | "415" | "416" | "417" | "418" | "419" | "420" | "421" | "422" | "423" | "424" | "426" | "428" | "429" | "431" | "500" | "501" | "502" | "503" | "504" | "505" | "506" | "507" | "508" | "509" | "510" | "511"
+
+};
+export type Treatment = {
+    'approvedIndications': Array < string >
+
+        'drugs': Array < Drug >
+
+};
+export type EvidenceQueries = {
+    'evidenceTypes': string
+
+        'highestLevelOnly': boolean
+
+        'levels': Array < "LEVEL_0" | "LEVEL_1" | "LEVEL_2A" | "LEVEL_2B" | "LEVEL_3" | "LEVEL_3A" | "LEVEL_3B" | "LEVEL_4" | "LEVEL_R1" | "LEVEL_R2" | "LEVEL_R3" >
+
+        'queries': Array < Query >
+
+        'source': string
+
+};
+export type VariantSearchQuery = {
+    'consequence': string
+
+        'entrezGeneId': number
+
+        'hgvs': string
+
+        'hugoSymbol': string
+
+        'proteinEnd': number
+
+        'proteinStart': number
+
+        'variant': string
+
+        'variantType': string
+
+};
+export type ClinicalTrial = {
+    'cdrId': string
+
+        'countries': Array < string >
+
+        'diseaseCondition': string
+
+        'drugs': Array < Drug >
+
+        'eligibilityCriteria': string
+
+        'inUSA': boolean
+
+        'lastChangedDate': string
+
+        'nctId': string
+
+        'open': boolean
+
+        'phase': string
+
+        'purpose': string
+
+        'recruitingStatus': string
+
+        'title': string
+
+};
 export type Link = {
     'href': string
 
         'method': string
 
         'rel': string
-
-};
-export type ArticleAbstract = {
-    'abstract': string
-
-        'link': string
 
 };
 
@@ -602,6 +644,69 @@ export default class OncoKbAPI {
             });
         };
 
+    evidencesUUIDsGetUsingPOSTURL(parameters: {
+        'uuids': Array < string > ,
+        $queryParameters ? : any
+    }): string {
+        let queryParameters: any = {};
+        let path = '/evidences';
+
+        if (parameters.$queryParameters) {
+            Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
+                var parameter = parameters.$queryParameters[parameterName];
+                queryParameters[parameterName] = parameter;
+            });
+        }
+        let keys = Object.keys(queryParameters);
+        return this.domain + path + (keys.length > 0 ? '?' + (keys.map(key => key + '=' + encodeURIComponent(queryParameters[key])).join('&')) : '');
+    };
+
+    /**
+     * Get specific evidences.
+     * @method
+     * @name OncoKbAPI#evidencesUUIDsGetUsingPOST
+     * @param {} uuids - Unique identifier list.
+     */
+    evidencesUUIDsGetUsingPOST(parameters: {
+        'uuids': Array < string > ,
+        $queryParameters ? : any,
+        $domain ? : string
+    }): Promise < Evidence > {
+        const domain = parameters.$domain ? parameters.$domain : this.domain;
+        const errorHandlers = this.errorHandlers;
+        const request = this.request;
+        let path = '/evidences';
+        let body: any;
+        let queryParameters: any = {};
+        let headers: any = {};
+        let form: any = {};
+        return new Promise(function(resolve, reject) {
+            headers['Accept'] = 'application/json';
+            headers['Content-Type'] = 'application/json';
+
+            if (parameters['uuids'] !== undefined) {
+                body = parameters['uuids'];
+            }
+
+            if (parameters['uuids'] === undefined) {
+                reject(new Error('Missing required  parameter: uuids'));
+                return;
+            }
+
+            if (parameters.$queryParameters) {
+                Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
+                    var parameter = parameters.$queryParameters[parameterName];
+                    queryParameters[parameterName] = parameter;
+                });
+            }
+
+            request('POST', domain + path, body, headers, queryParameters, form, reject, resolve, errorHandlers);
+
+        }).then(function(response: request.Response) {
+            return response.body;
+        });
+    };
+
     evidencesLookupGetUsingGETURL(parameters: {
         'entrezGeneId' ? : number,
         'hugoSymbol' ? : string,
@@ -680,7 +785,7 @@ export default class OncoKbAPI {
      * @param {string} hugoSymbol - The gene symbol used in Human Genome Organisation.
      * @param {string} variant - Variant name.
      * @param {string} tumorType - Tumor type name. OncoTree code is supported.
-     * @param {string} consequence - Consequence. Possible value: feature_truncation, frameshift_variant, inframe_deletion, inframe_insertion, initiator_codon_variant, missense_variant, splice_region_variant, stop_gained, synonymous_variant
+     * @param {string} consequence - Consequence. Possible value: feature_truncation, frameshift_variant, inframe_deletion, inframe_insertion, start_lost, missense_variant, splice_region_variant, stop_gained, synonymous_variant
      * @param {string} proteinStart - Protein Start.
      * @param {string} proteinEnd - Protein End.
      * @param {string} source - Tumor type source. OncoTree tumor types are the default setting. We may have customized version, like Quest.
@@ -1404,6 +1509,7 @@ export default class OncoKbAPI {
         'levels' ? : string,
         'highestLevelOnly' ? : boolean,
         'queryType' ? : string,
+        'hgvs' ? : string,
         $queryParameters ? : any
     }): string {
         let queryParameters: any = {};
@@ -1456,6 +1562,10 @@ export default class OncoKbAPI {
             queryParameters['queryType'] = parameters['queryType'];
         }
 
+        if (parameters['hgvs'] !== undefined) {
+            queryParameters['hgvs'] = parameters['hgvs'];
+        }
+
         if (parameters.$queryParameters) {
             Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
                 var parameter = parameters.$queryParameters[parameterName];
@@ -1482,6 +1592,7 @@ export default class OncoKbAPI {
      * @param {string} levels - Level of evidences.
      * @param {boolean} highestLevelOnly - Only show treatments of highest level
      * @param {string} queryType - Query type. There maybe slight differences between different query types. Currently support web or regular.
+     * @param {string} hgvs - HGVS varaint. Its priority is higher than entrezGeneId/hugoSymbol + variant combination
      */
     searchGetUsingGET(parameters: {
         'id' ? : string,
@@ -1496,6 +1607,7 @@ export default class OncoKbAPI {
         'levels' ? : string,
         'highestLevelOnly' ? : boolean,
         'queryType' ? : string,
+        'hgvs' ? : string,
         $queryParameters ? : any,
             $domain ? : string
     }): Promise < IndicatorQueryResp > {
@@ -1557,6 +1669,10 @@ export default class OncoKbAPI {
 
             if (parameters['queryType'] !== undefined) {
                 queryParameters['queryType'] = parameters['queryType'];
+            }
+
+            if (parameters['hgvs'] !== undefined) {
+                queryParameters['hgvs'] = parameters['hgvs'];
             }
 
             if (parameters.$queryParameters) {
@@ -1843,6 +1959,58 @@ export default class OncoKbAPI {
         });
     };
 
+    utilsCancerGeneListGetUsingGETURL(parameters: {
+        $queryParameters ? : any
+    }): string {
+        let queryParameters: any = {};
+        let path = '/utils/cancerGeneList';
+
+        if (parameters.$queryParameters) {
+            Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
+                var parameter = parameters.$queryParameters[parameterName];
+                queryParameters[parameterName] = parameter;
+            });
+        }
+        let keys = Object.keys(queryParameters);
+        return this.domain + path + (keys.length > 0 ? '?' + (keys.map(key => key + '=' + encodeURIComponent(queryParameters[key])).join('&')) : '');
+    };
+
+    /**
+     * Get cancer gene list in text file.
+     * @method
+     * @name OncoKbAPI#utilsCancerGeneListGetUsingGET
+     */
+    utilsCancerGeneListGetUsingGET(parameters: {
+            $queryParameters ? : any,
+                $domain ? : string
+        }): Promise < Array < CancerGene >
+        > {
+            const domain = parameters.$domain ? parameters.$domain : this.domain;
+            const errorHandlers = this.errorHandlers;
+            const request = this.request;
+            let path = '/utils/cancerGeneList';
+            let body: any;
+            let queryParameters: any = {};
+            let headers: any = {};
+            let form: any = {};
+            return new Promise(function(resolve, reject) {
+                headers['Accept'] = '*/*';
+                headers['Content-Type'] = 'application/json';
+
+                if (parameters.$queryParameters) {
+                    Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
+                        var parameter = parameters.$queryParameters[parameterName];
+                        queryParameters[parameterName] = parameter;
+                    });
+                }
+
+                request('GET', domain + path, body, headers, queryParameters, form, reject, resolve, errorHandlers);
+
+            }).then(function(response: request.Response) {
+                return response.body;
+            });
+        };
+
     variantsGetUsingGETURL(parameters: {
         $queryParameters ? : any
     }): string {
@@ -1903,6 +2071,7 @@ export default class OncoKbAPI {
         'consequence' ? : string,
         'proteinStart' ? : number,
         'proteinEnd' ? : number,
+        'hgvs' ? : string,
         $queryParameters ? : any
     }): string {
         let queryParameters: any = {};
@@ -1935,6 +2104,10 @@ export default class OncoKbAPI {
             queryParameters['proteinEnd'] = parameters['proteinEnd'];
         }
 
+        if (parameters['hgvs'] !== undefined) {
+            queryParameters['hgvs'] = parameters['hgvs'];
+        }
+
         if (parameters.$queryParameters) {
             Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
                 var parameter = parameters.$queryParameters[parameterName];
@@ -1956,6 +2129,7 @@ export default class OncoKbAPI {
      * @param {string} consequence - consequence
      * @param {integer} proteinStart - proteinStart
      * @param {integer} proteinEnd - proteinEnd
+     * @param {string} hgvs - HGVS varaint. Its priority is higher than entrezGeneId/hugoSymbol + variant combination
      */
     variantsLookupGetUsingGET(parameters: {
             'entrezGeneId' ? : number,
@@ -1965,6 +2139,7 @@ export default class OncoKbAPI {
             'consequence' ? : string,
             'proteinStart' ? : number,
             'proteinEnd' ? : number,
+            'hgvs' ? : string,
             $queryParameters ? : any,
                 $domain ? : string
         }): Promise < Array < Alteration >
@@ -2009,6 +2184,10 @@ export default class OncoKbAPI {
                     queryParameters['proteinEnd'] = parameters['proteinEnd'];
                 }
 
+                if (parameters['hgvs'] !== undefined) {
+                    queryParameters['hgvs'] = parameters['hgvs'];
+                }
+
                 if (parameters.$queryParameters) {
                     Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
                         var parameter = parameters.$queryParameters[parameterName];
@@ -2017,6 +2196,71 @@ export default class OncoKbAPI {
                 }
 
                 request('GET', domain + path, body, headers, queryParameters, form, reject, resolve, errorHandlers);
+
+            }).then(function(response: request.Response) {
+                return response.body;
+            });
+        };
+
+    variantsLookupPostUsingPOSTURL(parameters: {
+        'body': Array < VariantSearchQuery > ,
+        $queryParameters ? : any
+    }): string {
+        let queryParameters: any = {};
+        let path = '/variants/lookup';
+
+        if (parameters.$queryParameters) {
+            Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
+                var parameter = parameters.$queryParameters[parameterName];
+                queryParameters[parameterName] = parameter;
+            });
+        }
+        let keys = Object.keys(queryParameters);
+        return this.domain + path + (keys.length > 0 ? '?' + (keys.map(key => key + '=' + encodeURIComponent(queryParameters[key])).join('&')) : '');
+    };
+
+    /**
+     * Search for variants.
+     * @method
+     * @name OncoKbAPI#variantsLookupPostUsingPOST
+     * @param {} body - List of queries.
+     */
+    variantsLookupPostUsingPOST(parameters: {
+            'body': Array < VariantSearchQuery > ,
+            $queryParameters ? : any,
+            $domain ? : string
+        }): Promise < Array < Array < {} >
+        >
+        > {
+            const domain = parameters.$domain ? parameters.$domain : this.domain;
+            const errorHandlers = this.errorHandlers;
+            const request = this.request;
+            let path = '/variants/lookup';
+            let body: any;
+            let queryParameters: any = {};
+            let headers: any = {};
+            let form: any = {};
+            return new Promise(function(resolve, reject) {
+                headers['Accept'] = 'application/json';
+                headers['Content-Type'] = 'application/json';
+
+                if (parameters['body'] !== undefined) {
+                    body = parameters['body'];
+                }
+
+                if (parameters['body'] === undefined) {
+                    reject(new Error('Missing required  parameter: body'));
+                    return;
+                }
+
+                if (parameters.$queryParameters) {
+                    Object.keys(parameters.$queryParameters).forEach(function(parameterName) {
+                        var parameter = parameters.$queryParameters[parameterName];
+                        queryParameters[parameterName] = parameter;
+                    });
+                }
+
+                request('POST', domain + path, body, headers, queryParameters, form, reject, resolve, errorHandlers);
 
             }).then(function(response: request.Response) {
                 return response.body;

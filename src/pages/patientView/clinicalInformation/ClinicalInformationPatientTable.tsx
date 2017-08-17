@@ -1,15 +1,15 @@
 import * as React from "react";
 import {ClinicalData} from "../../../shared/api/generated/CBioPortalAPI";
 import LazyMobXTable from "shared/components/lazyMobXTable/LazyMobXTable";
-import TableHeaderControls from "shared/components/tableHeaderControls/TableHeaderControls";
 
 import styles from './style/patientTable.module.scss';
-import {MSKTab} from "../../../shared/components/MSKTabs/MSKTabs";
 
 export interface IClinicalInformationPatientTableProps {
     data: ClinicalData[];
     showTitleBar?: boolean;
     cssClass?:string;
+    showFilter?:boolean;
+    showCopyDownload?:boolean;
 }
 
 class PatientTable extends LazyMobXTable<IPatientRow> {}
@@ -21,6 +21,19 @@ interface IPatientRow {
 
 export default class ClinicalInformationPatientTable extends React.Component<IClinicalInformationPatientTableProps, {}> {
 
+    private getDisplayValue(data:{attribute:string, value:string}):string {
+        let ret:string;
+        switch (data.attribute) {
+            case "Overall Survival (Months)":
+                ret = parseInt(data.value, 10).toFixed(0);
+                break;
+            default:
+                ret = data.value;
+                break;
+        }
+        return ret;
+    }
+
     public render() {
 
         const tableData = this.props.data && this.props.data.map((el: ClinicalData) => ({
@@ -31,11 +44,23 @@ export default class ClinicalInformationPatientTable extends React.Component<ICl
         return (
             <PatientTable
                   data={tableData}
-                  columns={[{ name:'Attribute', render:(data)=><span>{data.attribute}</span>},
-                        { name:'Value', render: (data)=><span>{data.value}</span>}]}
+                  columns={[
+                      {   name:'Attribute',
+                          render:(data)=><span>{data.attribute}</span>,
+                          filter: (data:IPatientRow, filterString:string, filterStringUpper:string) =>
+                            data.attribute.toString().toUpperCase().indexOf(filterStringUpper) > -1
+                      },
+                      {
+                          name:'Value',
+                          render: (data)=><span>{this.getDisplayValue(data)}</span>,
+                          filter: (data:IPatientRow, filterString:string, filterStringUpper:string) =>
+                            data.value.toString().toUpperCase().indexOf(filterStringUpper) > -1
+                      }]}
                   showPagination={false}
                   showColumnVisibility={false}
                   className={styles.patientTable}
+                  showFilter={(this.props.showFilter === false) ? false : true }
+                  showCopyDownload={(this.props.showCopyDownload === false) ? false : true }
             />
         );
     }

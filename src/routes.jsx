@@ -15,8 +15,12 @@ import { restoreRouteAfterRedirect } from './shared/lib/redirectHelpers';
 // webpack knows to 'split' the code into seperate bundles accordingly
 // see article http://henleyedition.com/implicit-code-splitting-with-react-router-and-webpack/
 import PatientViewPage from 'bundle?lazy!babel!./pages/patientView/PatientViewPage';
+import ResultsViewPage from 'bundle?lazy!babel!./pages/resultsView/ResultsViewPage';
 import HomePage from 'bundle?lazy!babel!./pages/home/HomePage';
-//import DatasetPage from 'bundle?lazy!babel!./pages/datasetView/DatasetPage';
+import TestimonialsPage from 'pages/staticPages/testimonialsPage/TestimonialsPage';
+import DatasetPage from 'bundle?lazy!babel!./pages/datasetView/DatasetPage';
+import './globalComponents';
+
 // accepts bundle-loader's deferred loader function and defers execution of route's render
 // until chunk is loaded
 function lazyLoadComponent(loader) {
@@ -36,13 +40,22 @@ var defaultRoute = window.defaultRoute || '/home';
 
 var restoreRoute = inject("routing")(restoreRouteAfterRedirect);
 
-export const makeRoutes = (routing) => {
+let getBlankPage = function(){
+    if (typeof window.onReactAppReady === 'function') {
+        window.onReactAppReady();
+    }
+    return <div />
+}
 
+export const makeRoutes = (routing) => {
     return (<Route path="/" component={Container}>
         <Route path="/home" getComponent={lazyLoadComponent(HomePage)}/>
         <Route path="/patient" getComponent={lazyLoadComponent(PatientViewPage)}/>
+        <Route path="/datasets" getComponent={lazyLoadComponent(DatasetPage)} />
         <Route path="/restore" component={restoreRoute}/>
-        <Redirect from="*" to={defaultRoute}/>
+        <Route path="/testimonials" component={TestimonialsPage}/>
+        <Route path="/blank" component={getBlankPage}/>
+        <Route path="/results" getComponent={lazyLoadComponent(ResultsViewPage)} />
         <IndexRedirect to={defaultRoute}/>
     </Route>)
 };

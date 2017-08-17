@@ -1,13 +1,13 @@
 import * as React from "react";
 import {CacheData} from "./LazyMobXCache";
 import {TableCellStatus, default as TableCellStatusIndicator} from "../components/TableCellStatus";
-export default function LazyLoadedTableCell<D,T>(
-    getCacheData:(d:D)=>CacheData<T>|null,
-    render:(t:T)=>JSX.Element,
+export default function LazyLoadedTableCell<D,T,M=any>(
+    getCacheData:(d:D)=>CacheData<T,M>|null,
+    render:(t:T, d?:D)=>JSX.Element,
     naAlt?:string
 ):(d:D)=>JSX.Element {
     return (d:D)=>{
-        const cacheData:CacheData<T>|null = getCacheData(d);
+        const cacheData:CacheData<T,M>|null = getCacheData(d);
         if (cacheData === null) {
             return (
                 <TableCellStatusIndicator
@@ -28,7 +28,7 @@ export default function LazyLoadedTableCell<D,T>(
                 />
             );
         } else {
-            return render(cacheData.data);
+            return render(cacheData.data, d);
         }
     };
 }
