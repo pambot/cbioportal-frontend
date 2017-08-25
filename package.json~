@@ -35,8 +35,8 @@
   "license": "",
   "dependencies": {
     "3dmol": "^1.1.3",
-    "@types/chai": "3.5.2",
     "@types/chai-enzyme": "^0.6.2",
+    "@types/chai": "3.5.2",
     "@types/chart.js": "^2.4.6",
     "@types/classnames": "0.0.32",
     "@types/detect-browser": "^1.6.0",
@@ -80,7 +80,6 @@
     "bootstrap-sass": "^3.3.7",
     "bowser": "^1.7.1",
     "bundle-loader": "^0.5.4",
-    "chart.heatmap.js": "0.0.1-alpha",
     "chart.js": "^2.6.0",
     "classnames": "^2.2.5",
     "clinical-timeline": "0.0.15",
@@ -99,17 +98,20 @@
     "fixed-data-table": "^0.6.3",
     "font-awesome": "^4.7.0",
     "font-awesome-webpack": "^0.0.4",
-    "highcharts": "^5.0.11",
     "highcharts-heatmap": "^0.1.2",
+    "highcharts": "^5.0.11",
     "html-webpack-plugin": "^2.26.0",
     "imports-loader": "^0.7.0",
     "javascript-natural-sort": "^0.7.1",
     "jquery": "^3.1.1",
     "jquery-migrate": "^3.0.0",
-    "js-combinatorics": "^0.5.2",
     "json-fn": "^1.1.1",
     "json-loader": "^0.5.4",
+<<<<<<< HEAD
     "konva": "^1.6.3",
+=======
+    "js-combinatorics": "^0.5.2",
+>>>>>>> upstream/rc
     "less": "^2.7.2",
     "lodash": "^4.17.4",
     "lolex": "^1.6.0",
@@ -139,7 +141,11 @@
     "react-dom": "^15.4.2",
     "react-draggable": "^2.2.6",
     "react-file-download": "^0.3.2",
+<<<<<<< HEAD
+    "react-heatmap": "^1.0.6",
+=======
     "react-fontawesome": "^1.5.0",
+>>>>>>> upstream/rc
     "react-height": "^2.2.0",
     "react-highcharts": "^12.0.0",
     "react-if": "^2.1.0",
@@ -157,6 +163,11 @@
     "react-transition-group": "^1.1.3",
     "react-zeroclipboard": "^3.2.2",
     "reactable": "^0.14.1",
+<<<<<<< HEAD
+    "reactableMSK": "git+https://github.com/alisman/reactable.git",
+    "reactochart": "git+https://github.com/spotify/reactochart.git#0.2.1",
+=======
+>>>>>>> upstream/rc
     "recharts": "^0.20.5",
     "recompose": "^0.22.0",
     "redux": "^3.6.0",

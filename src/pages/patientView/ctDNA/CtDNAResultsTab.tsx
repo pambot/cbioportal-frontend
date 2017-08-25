@@ -67,6 +67,19 @@ export default class CtDNAResultsTab extends React.Component<ICtDNAResultsTabPro
 
   public render() {
 
+    // these div boxes are just for the current display
+    // please remove if this prototype is further developed
+    
+    const divFloat = {
+      width: "35%",
+      float: "left",
+    };
+
+    const largeDiv = {
+      width: "100%",
+      height: "500px",
+    };
+
     return (
       <div>
       <form onSubmit={this.handleSubmit}>
@@ -77,17 +90,23 @@ export default class CtDNAResultsTab extends React.Component<ICtDNAResultsTabPro
 
       <br/>
 
+      <div style={divFloat}>
       <HeatmapVAFEvents
         heatmapGeneList={this.state.heatmapGeneList}
         mergedMutations={this.props.mergedMutations}
         sampleManager={this.props.sampleManager}/>
+      </div>
 
       <br/><br/>
 
+      <div style={divFloat}>
       <LinePlotVAFTime
         linePlotGene={this.state.linePlotGene}
         mergedMutations={this.props.mergedMutations}
         sampleManager={this.props.sampleManager}/>
+      </div>
+
+      <div style={largeDiv}></div>
 
       </div>
     )
